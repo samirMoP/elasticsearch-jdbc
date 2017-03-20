@@ -8,9 +8,12 @@ es_port=$(curl -XGET "$consul_url/port" 2>/dev/null | awk '{split($0,a,","); pri
 pg_user=$(curl -XGET "$consul_url/user" 2>/dev/null | awk '{split($0,a,","); print a[4]}' | cut -d":" -f2 | cut -d'"' -f2 | base64 --decode)
 pg_password=$(curl -XGET "$consul_url/password" 2>/dev/null | awk '{split($0,a,","); print a[4]}' | cut -d":" -f2 | cut -d'"' -f2 | base64 --decode)
 
-#echo $pg_url
-#echo $es_cluster_name
-#echo $pg_user
-#echo $es_port
-#echo $pg_password
-#echo $es_cluster_host
+
+if [ "$1" == "debug"  ]; then
+  echo $pg_url
+  echo $es_cluster_name
+  echo $pg_user
+  echo $es_port
+  echo $pg_password
+  echo $es_cluster_host
+fi
