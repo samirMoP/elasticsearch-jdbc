@@ -85,6 +85,8 @@ dependencies {
     compile 'org.xbib.elasticsearch.plugin:elasticsearch-helper:' + versions.'elasticsearch-helper'
     compile 'org.apache.logging.log4j:log4j-slf4j-impl:' + versions.log4j
     compile 'org.apache.logging.log4j:log4j-core:'+ versions.log4j
+    compile group: "org.cfg4j", name:"cfg4j-core", version: "4.4.0"
+    compile group: "org.cfg4j", name:"cfg4j-consul", version: "4.4.0"
     compile('com.vividsolutions:jts:' + versions.jts) {
         exclude group: 'xerces'
     }
