@@ -1,17 +1,33 @@
 #!/bin/bash
 
 source ./get_consul_vars.sh
-if [ "$#" -ne 1 ]; then
+if [ "$#" -lt 1 ]; then
     echo "Are you sure what are you doing :) ? This will trigger actfees full reindex."
-    echo "Usage: $0 [YES]"
+    echo "Usage: $0 [YES] [single|dist]"
     exit -1
 fi
+confirm=$1
+shift
+mode=$1
+shift
+case $mode in
+(dist)
+  mode="dist"
+  ;;
+  (*)
+  mode="single"
+  ;;
+esac
 
 prev_timestamp=$(cat af_last_version | cut -d"_" -f2)
 prev_version_pid=$(pgrep -f ".*af_config_$prev_timestamp.json")
 prev_version=$(cat af_last_version)
 echo "Previous version pid $prev_version_pid"
 timestamp=$(date +%s)
+
+echo "Writting feeds_$timestamp as current index"
+echo "feeds_$timestamp" > af_last_version
+
 definition=$'{
     "type" : "jdbc",
     "jdbc" : {
@@ -39,7 +55,8 @@ definition=$'{
         "password" : "'$pg_password'",
         "type" : "feed",
         "schedule" : "0/5 * * ? * *",
-        "detect_json" : false
+        "detect_json" : false,
+	"mode": "'$mode'"
     }
 }'
 def_file="af_config_$timestamp.json"

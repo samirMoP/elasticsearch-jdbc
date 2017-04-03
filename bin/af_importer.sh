@@ -1,16 +1,27 @@
 #!/bin/bash
 
-usage="Usage: $0 [init_start|start|stop|restart|status|clear_logs]"
+usage="Usage: $0 [init_start|start|stop|restart|status|clear_logs|write_conf] [dist|single]"
 
-if [ $# -ne 1 ]; then
+if [ $# -lt 1 ]; then
   echo $usage
   exit 1
 fi
 startStop=$1
 shift
+mode=$1
+shift
+
+case $mode in
+(dist)
+  mode="dist"
+;;
+(*)
+mode="single"
+;;
+esac
 
 source ./get_consul_vars.sh
-
+export AWS_REGION=eu-west-1
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 bin=${DIR}/../bin
 lib=${DIR}/../lib
@@ -64,26 +75,7 @@ importer_stop () {
   
 }
 
-
-
-init_start () {
-  if [  "$current_timestamp" == "first" ]; then
-    echo "Running import tool for first time"
-    echo "Creating mappings for $current_version"
-    curl -XPUT "$es_cluster_host:9200/$current_version?pretty=true" -d'
-    {
-      "mappings": {
-         "feed": {
-            "properties": {
-               "event": {
-                  "type": "string",
-                  "index": "not_analyzed"
-               }
-            }
-         }
-      }
-    }'
-
+write_conf_file () {
    definition=$'{
     "type" : "jdbc",
     "jdbc" : {
@@ -111,10 +103,35 @@ init_start () {
         "password" : "'$pg_password'",
         "type" : "feed",
         "schedule" : "0/5 * * ? * *",
-        "detect_json" : false
+        "detect_json" : false,
+        "mode" : "'$mode'"
     }
    }'
-   echo "$definition" > af_config_first.json  
+   echo "$definition" > af_config_first.json
+}
+
+
+
+init_start () {
+  if [  "$current_timestamp" == "first" ]; then
+    echo "Running import tool for first time"
+    echo "Creating mappings for $current_version"
+    curl -XPUT "$es_cluster_host:9200/$current_version?pretty=true" -d'
+    {
+      "mappings": {
+         "feed": {
+            "properties": {
+               "event": {
+                  "type": "string",
+                  "index": "not_analyzed"
+               }
+            }
+         }
+      }
+    }'
+   
+   write_conf_file
+
    importer_start
    echo "Creating initial alias actfeeds"
    curl -XPUT "$es_cluster_host:9200/$current_version/_alias/actfeeds"
@@ -130,9 +147,9 @@ importer_start () {
   then
     echo "Import tool is already running with pid $current_version_pid. Stop it first."
     exit 1
-  fi 
+  fi
+  write_conf_file
 
- 
   java \
       -cp "${lib}/*" \
       -Dlog4j.configurationFile=${bin}/log4j2.xml \
@@ -167,6 +184,9 @@ case $startStop in
 ;;
 (init_start)
   init_start
+;;
+(write_conf)
+  write_conf_file
 ;;
 (clear_logs)
   clear_logs
