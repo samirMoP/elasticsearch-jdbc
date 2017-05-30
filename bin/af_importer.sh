@@ -95,7 +95,7 @@ write_conf_file () {
                ],
          "elasticsearch" : {
                       "cluster" : "'$es_cluster_name'",
-                      "host" : ["'$es_cluster_host'"],
+                      "host" : ["'$es_cluster_host'","'$es_cluster_host2'"],
                       "port" : '$es_port' },
         "index" : "feeds_'$current_timestamp'",
         "statefile" : "af_statefile_'$current_timestamp'.json",

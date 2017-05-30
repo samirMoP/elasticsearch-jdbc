@@ -47,7 +47,7 @@ definition=$'{
                ],
          "elasticsearch" : {
                       "cluster" : "'$es_cluster_name'",
-                      "host" : ["'$es_cluster_host'"],
+                      "host" : ["'$es_cluster_host'","'$es_cluster_host2'"],
                       "port" : '$es_port' },
         "index" : "feeds_'$timestamp'",
         "statefile" : "af_statefile_'$timestamp'.json",
