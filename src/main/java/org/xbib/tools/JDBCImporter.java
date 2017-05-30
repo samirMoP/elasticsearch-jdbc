@@ -174,6 +174,9 @@ public class JDBCImporter extends AbstractPipeline<SettingsPipelineRequest>
   }
 
   public void runDistributed() {
+    //Initial sync from S3
+    //S3Download initDownload = new S3Download();
+    //initDownload.run();
     HostAndPort consulServer = HostAndPort.fromParts("consul", 8500);
     Consul client = Consul.builder().withHostAndPort(consulServer).build();
     serviceKey = "service/" + service + "/leader_"+getLastVersion();

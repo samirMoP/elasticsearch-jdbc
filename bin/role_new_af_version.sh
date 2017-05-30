@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source ./get_consul_vars.sh
+export AWS_REGION=eu-west-1
 if [ "$#" -lt 1 ]; then
     echo "Are you sure what are you doing :) ? This will trigger actfees full reindex."
     echo "Usage: $0 [YES] [single|dist]"

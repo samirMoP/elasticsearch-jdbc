@@ -66,9 +66,11 @@ public class S3Download implements Runnable {
   }  
   
   public static void main(String[] args) throws IOException {
-    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    //ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     S3Download downloader = new S3Download();
-    scheduler.scheduleAtFixedRate(downloader, 10, 10, TimeUnit.SECONDS);
+    //scheduler.scheduleAtFixedRate(downloader, 10, 10, TimeUnit.SECONDS);
+    downloader.run();
+    
     }
 }
 

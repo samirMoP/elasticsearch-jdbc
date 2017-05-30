@@ -21,6 +21,7 @@ mode="single"
 esac
 
 source ./get_consul_vars.sh
+./init_download.sh
 export AWS_REGION=eu-west-1
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 bin=${DIR}/../bin
