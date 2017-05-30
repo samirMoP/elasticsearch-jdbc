@@ -106,8 +106,15 @@ else
   exit -1
 fi
 
-echo "Waiting for initial indexint to finish"
-sleep 30
+echo "Waiting for initial indexing to finish"
+sleep 180
+
+./index_smoketest.sh $es_cluster_host "feeds_$timestamp"
+
+if [ "$?" != 0 ]; then
+  echo "Smoke test FAILED aborting index switch"
+  exit -1
+fi
 
 echo "Switching index alias to new version..."
 
